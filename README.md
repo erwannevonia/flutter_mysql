@@ -1,12 +1,12 @@
+# Gestion des Utilisateurs - Flutter & MySQL avec Authentification
 
-# Gestion des Utilisateurs - Flutter & MySQL
-
-Ce projet consiste à développer une application Flutter connectée à une base de données MySQL à l’aide d’un backend Node.js. L’objectif est de manipuler et afficher dynamiquement des données d’utilisateurs.
+Ce projet ajoute un système d'authentification utilisateur à une application Flutter connectée à une base de données MySQL à l’aide d’un backend Node.js. L'objectif est de gérer des connexions sécurisées et d'assurer une gestion complète des utilisateurs.
 
 ## 📋 Fonctionnalités
-- **Récupération des utilisateurs** depuis la base de données MySQL.
-- **Ajout de nouveaux utilisateurs** avec nom, email et téléphone.
-- Affichage des données dans une interface Flutter.
+- **Authentification** avec email et mot de passe.
+- **Récupération et gestion des utilisateurs** depuis une base MySQL.
+- **Ajout d'utilisateurs** avec nom, email, téléphone et mot de passe.
+- Hashage des mots de passe pour une meilleure sécurité.
 - Backend développé avec Node.js et Express.
 
 ---
@@ -17,10 +17,12 @@ flutter_mysql_project/
 ├── backend/              # Backend Node.js
 │   ├── server.js
 │   ├── package.json
-│   └── node_modules/
+│   ├── node_modules/
+│   └── ...
 ├── frontend/             # Application Flutter
 │   ├── lib/
 │   ├── pubspec.yaml
+│   ├── add_user.dart
 │   └── ...
 ```
 
@@ -32,54 +34,49 @@ flutter_mysql_project/
 - [Node.js](https://nodejs.org/) installé.
 - [Flutter](https://flutter.dev/) installé et configuré.
 - Serveur MySQL fonctionnel.
+- Le premier TP de réalisé sur la machine.
 
-### 1. Backend
-1. **Installation des dépendances :**
+### 1. Mise à jour de la base de données
+Ajoutez le champ `password` dans la table `users` pour gérer l'authentification.
+
+```sql
+ALTER TABLE users ADD COLUMN password VARCHAR(255) NOT NULL AFTER email;
+
+-- Exemple pour mettre à jour les utilisateurs existants
+UPDATE users
+SET password = SHA2('motdepasse', 256)
+WHERE email = 'exemple@domain.com';
+```
+
+### 2. Backend
+1. **Installer les nouvelles dépendances** :
    ```bash
    cd backend
-   npm install
+   npm install bcryptjs jsonwebtoken body-parser
    ```
-2. **Configuration de la base de données :**
-   - Créez la base de données et la table dans MySQL, ainsi qu'un jeu de données :
-     ```sql
-     CREATE DATABASE gestion_utilisateurs;
 
-     USE gestion_utilisateurs;
+2. **Mise à jour du serveur Node.js** :
+   - Ajoutez une route `/api/login` pour gérer l'authentification.
+   - Assurez-vous que les mots de passe sont comparés avec `bcrypt`.
 
-     CREATE TABLE users (
-         id INT AUTO_INCREMENT PRIMARY KEY,
-         nom VARCHAR(50),
-         email VARCHAR(50),
-         phone VARCHAR(20)
-     );
-
-     INSERT INTO users (nom, email, phone) VALUES
-     ('Alice Dupont', 'alice@example.com', '0612345678'),
-     ('Bob Martin', 'bob@example.com', '0678901234');
-     ```
-   - Mettez à jour les informations de connexion MySQL dans `server.js` :
-     ```javascript
-     const connection = mysql.createConnection({
-         host: '127.0.0.1',
-         user: 'votre_utilisateur_mysql',
-         password: 'votre_mot_de_passe',
-         database: 'gestion_utilisateurs'
-     });
-     ```
-
-3. **Lancer le serveur backend :**
+3. **Lancer le serveur** :
    ```bash
    node server.js
    ```
 
-### 2. Frontend
-1. **Installation des dépendances :**
+### 3. Frontend
+1. **Mise à jour des fichiers Flutter** :
+   - Créez un nouvel écran d'authentification (fichier `main.dart`).
+   - Ajoutez la gestion des mots de passe dans `api_service.dart`.
+   - Créez un nouvel écran pour l'ajout des utilisateurs après connexion (`add_user.dart`).
+
+2. **Installation des dépendances** :
    ```bash
    cd frontend
    flutter pub get
    ```
 
-2. **Lancer l’application Flutter :**
+3. **Lancer l’application Flutter** :
    ```bash
    flutter run
    ```
@@ -88,14 +85,14 @@ flutter_mysql_project/
 
 ## 🖥️ Fonctionnement de l’Application
 
-### Écran principal
-- Liste des utilisateurs récupérés depuis la base MySQL.
-- Formulaire permettant d’ajouter un nouvel utilisateur avec son **nom**, **email** et **téléphone**.
+### Écran d'authentification
+- Champ email et mot de passe pour se connecter.
+- Gestion des erreurs (utilisateur inexistant, mot de passe incorrect, etc.).
+- Redirection vers l'écran de gestion des utilisateurs après connexion réussie.
 
-### Ajouter un utilisateur
-1. Remplissez le formulaire avec les informations de l’utilisateur.
-2. Cliquez sur **"Ajouter un utilisateur"**.
-3. L’utilisateur est ajouté à la base MySQL, et la liste se met à jour automatiquement.
+### Ajout des utilisateurs
+- Ajout des utilisateurs avec nom, email, téléphone et mot de passe.
+- Hashage des mots de passe avant enregistrement en base.
 
 ---
 
@@ -110,38 +107,29 @@ B -->|Queries| C[MySQL Database]
 ---
 
 ## 📌 Critères remplis
-1. **Endpoints fonctionnels :**
-   - Récupération des données : `/api/utilisateurs`.
-   - Ajout d’un utilisateur : `/api/utilisateurs`.
+1. **Authentification complète** :
+   - Validation des identifiants utilisateur (email et mot de passe).
+   - Messages d'erreur en cas de connexion échouée.
 
-2. **Affichage des données dans Flutter :**
-   - Liste dynamique et mise à jour en temps réel.
+2. **Endpoints fonctionnels** :
+   - `/api/login` : Authentification.
+   - `/api/utilisateurs` : Gestion des utilisateurs.
 
-3. **Robustesse et gestion des erreurs :**
-   - Messages d’erreur en cas de problème de connexion.
-   - Gestion des champs vides avant l’ajout.
+3. **Robustesse et sécurité** :
+   - Hashage des mots de passe avec `bcrypt`.
+   - Validation des données.
 
-4. **Rapport complet :**
-   - Documentation claire dans ce README.
-   - Explications des étapes et schéma d’architecture.
-
----
-
-## 📷 Captures d’écran
-
-### Liste des utilisateurs
-![code_fetch](/assets/fetch_screen.png)
-
-### Ajout d’un utilisateur
-![code_add](/assets/add_screen.png)
+4. **Affichage et navigation Flutter** :
+   - Écran d'authentification.
+   - Redirection après connexion.
 
 ---
+
+## 📷 Captures d’écran (Impossible de le finir pour l'instant, donc aucune capture d'écran possible.)
+
+<!-- --- -->
 
 ## 🚀 Améliorations possibles
-- Ajouter la possibilité de modifier ou supprimer un utilisateur.
-- Gestion de la pagination pour les grandes bases de données.
-- Sécuriser l’API avec des tokens d’authentification.
-
----
-
-N’hésitez pas à cloner le repo et tester ce projet. Si vous avez des questions ou des suggestions, ouvrez une **issue** !
+- Ajouter une gestion des tokens JWT pour les sessions.
+- Mettre en place un écran pour modifier ou supprimer les utilisateurs.
+- Gérer les rôles utilisateurs pour différencier les droits.
