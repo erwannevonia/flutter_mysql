@@ -62,7 +62,7 @@ flutter_mysql_project/
      const connection = mysql.createConnection({
          host: '127.0.0.1',
          user: 'root',
-         password: 'votre_password',
+         password: 'votre_mot_de_passe',
          database: 'gestion_utilisateurs'
      });
      ```
@@ -130,10 +130,10 @@ B -->|Queries| C[MySQL Database]
 ## 📷 Captures d’écran
 
 ### Liste des utilisateurs
-_TODO : Ajoutez une capture d’écran ici._
+_À faire : Ajoutez une capture d’écran ici._
 
 ### Ajout d’un utilisateur
-_TODO : Ajoutez une capture d’écran ici._
+_À faire : Ajoutez une capture d’écran ici._
 
 ---
 
