@@ -40,7 +40,7 @@ flutter_mysql_project/
    npm install
    ```
 2. **Configuration de la base de données :**
-   - Créez la base de données et la table dans MySQL :
+   - Créez la base de données et la table dans MySQL, ainsi qu'un jeu de données :
      ```sql
      CREATE DATABASE gestion_utilisateurs;
 
@@ -61,7 +61,7 @@ flutter_mysql_project/
      ```javascript
      const connection = mysql.createConnection({
          host: '127.0.0.1',
-         user: 'root',
+         user: 'votre_utilisateur_mysql',
          password: 'votre_mot_de_passe',
          database: 'gestion_utilisateurs'
      });
@@ -130,10 +130,10 @@ B -->|Queries| C[MySQL Database]
 ## 📷 Captures d’écran
 
 ### Liste des utilisateurs
-_À faire : Ajoutez une capture d’écran ici._
+![code_fetch](/assets/fetch_screen.png)
 
 ### Ajout d’un utilisateur
-_À faire : Ajoutez une capture d’écran ici._
+![code_add](/assets/add_screen.png)
 
 ---
 
